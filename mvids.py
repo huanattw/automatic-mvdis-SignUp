@@ -10,7 +10,8 @@ class getTest:
     def __init__(self, information):
         self.info = information
         self.locate=[60,64]
-        self.dates = list()
+        self.today = date.today()
+        self.dates = [self.today+timedelta(30)]
         self.session = requests.Session()
         self.session.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'
         self.BaseURL = "https://www.mvdis.gov.tw/m3-emv-trn/exm/"
@@ -39,11 +40,10 @@ class getTest:
     # 取得最新日期區間
     def updateDate(self):
         self.dates.clear()
-        today = date.today()
-        self.dates.append(today+timedelta(30))
-        self.Consolelog("時間區間設定完成")
+        self.today = date.today()
+        self.dates.append(self.today+timedelta(30))
         for i in range(1,31):
-            self.dates.append(today+timedelta(i))
+            self.dates.append(self.today+timedelta(i))
 
     # 取得場次
     def query(self, dates):
@@ -135,18 +135,20 @@ class getTest:
 
 
     def main(self):
+        self.Consolelog("時間區間設定完成")
         while(1==1):
             if self.already():
                 self.Consolelog("已報名成功")
                 exit()
-            self.updateDate()
-            self.Consolelog("場次取得完成")
             for dates in self.dates:
                 self.query(dates)
+            self.Consolelog("場次取得完成 共有 {} 場".format(len(self.avail)))
             for avail in self.avail:
                 self.Consolelog("正在報名 {} ".format(avail))
                 self.preadd(avail)
                 self.signUp(avail)
+            self.updateDate()
+            self.Consolelog("時間區間設定完成")
 
 
 if __name__ == "__main__":
