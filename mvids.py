@@ -9,7 +9,7 @@ import requests
 class getTest:
     def __init__(self, information):
         self.info = information
-        self.locate=[60,64]
+        self.locate = [60, 64]
         self.today = date.today()
         self.dates = [self.today+timedelta(30)]
         self.session = requests.Session()
@@ -17,14 +17,13 @@ class getTest:
         self.BaseURL = "https://www.mvdis.gov.tw/m3-emv-trn/exm/"
         self.locationURL = "{}locations".format(self.BaseURL)
         self.signupURL = "{}/signUp".format(self.BaseURL)
-        self.queryURL="{}/query".format(self.BaseURL)
+        self.queryURL = "{}/query".format(self.BaseURL)
         self.avail = list()
 
-
     def Consolelog(self, msg):
-        temp = "{} {} ".format(time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime()), msg)
+        temp = "{} {} ".format(time.strftime(
+            "[%Y-%m-%d %H:%M:%S]", time.localtime()), msg)
         print(temp)
-
 
     def LineNotifyLog(self, msg):
         headers = {
@@ -42,7 +41,7 @@ class getTest:
         self.dates.clear()
         self.today = date.today()
         self.dates.append(self.today+timedelta(30))
-        for i in range(1,31):
+        for i in range(1, 31):
             self.dates.append(self.today+timedelta(i))
 
     # 取得場次
@@ -78,7 +77,6 @@ class getTest:
             info = [tempOP[1], tempOP[3], tempOP[5]]
             if (info not in self.avail):
                 self.avail.append(info)
-        
 
     def preadd(self, infos):
         payLoad = {
@@ -94,11 +92,10 @@ class getTest:
         }
         result = self.session.post(self.signupURL, data=payLoad)
 
-
     def already(self):
         payLoad = {
             'method': 'query',
-            'reservationPK':0,
+            'reservationPK': 0,
             'idNo': self.info[0],
             'birthdayStr': self.info[1]
         }
@@ -107,7 +104,7 @@ class getTest:
             return True
         else:
             return False
-            
+
     # 報名
     def signUp(self, infos):
         payLoad = {
@@ -133,10 +130,9 @@ class getTest:
         else:
             self.Consolelog("報名失敗")
 
-
     def main(self):
         self.Consolelog("時間區間設定完成")
-        while(1==1):
+        while(1 == 1):
             if self.already():
                 self.Consolelog("已報名成功")
                 exit()
@@ -164,6 +160,6 @@ if __name__ == "__main__":
     config = configparser.ConfigParser()
     config.read(configFilename)
     info = [config['Default']['id'], config['Default']['birth'], config['Default']
-            ['name'], config['Default']['phone'],config['Default']['email'],config['Default']['token']]
+            ['name'], config['Default']['phone'], config['Default']['email'], config['Default']['token']]
     bot = getTest(info)
     bot.main()
