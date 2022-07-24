@@ -1,0 +1,6 @@
+# VSCode
+.vscode
+
+# private data
+*.ini
+
