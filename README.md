@@ -4,9 +4,8 @@
 最近朋友開始搶機車駕照，所以就幫忙寫惹
 
 ## Depndencies
-* requests
-* bs4 
-* lxmllxml
+* requests 
+* lxml
 
 ## Usage 
 1. 下載到電腦
@@ -16,7 +15,7 @@
  
 2. 安裝套件
 ```
-pip install requests bs4 lxml
+pip install requests lxml
 ```
 
 3. 新增 accounts.ini 存放個人基本資料、LineNotifyToken 的檔案，格式如下:<br>
