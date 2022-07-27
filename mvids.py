@@ -4,6 +4,7 @@ import os
 import re
 import time
 import requests
+from bs4 import BeautifulSoup as bs
 
 
 class getTest:
@@ -64,7 +65,7 @@ class getTest:
             'secDateStr': '',
             'secId': '',
             'divid': '',
-            'licenseTypeCode': '3',
+            'licenseTypeCode': 'A',
             'expectExamDateStr': tempDate,
             '_onlyWeekend': 'on',
             'dmvNoLv1': '60',
@@ -84,7 +85,7 @@ class getTest:
             'secDateStr': '',
             'secId': infos[1],
             'divId': infos[2],
-            'licenseTypeCode': '3',
+            'licenseTypeCode': 'A',
             'expectExamDateStr': infos[0],
             '_onlyWeekend': 'on',
             'dmvNoLv1': self.locate[0],
@@ -105,6 +106,17 @@ class getTest:
         else:
             return False
 
+
+    def getError(self,result):
+        errorList = list()
+        soup = bs(result,'lxml')
+        cities = str(soup.select('#headerMessage')[0])
+        ress=cities[88:].split('<br/>')
+        for res in ress:
+            errorList.append(res.split('</td>')[0])
+        return errorList
+
+
     # 報名
     def signUp(self, infos):
         payLoad = {
@@ -113,7 +125,7 @@ class getTest:
             'secId': infos[1],
             'divId': infos[2],
             'dmvNo': self.locate[1],
-            'licenseTypeCode': '3',
+            'licenseTypeCode': 'A',
             'otp': '',
             'idNo': self.info[0],
             'birthdayStr': self. info[1],
@@ -122,13 +134,17 @@ class getTest:
             'email': self.info[4]
         }
         result = self.session.post(self.signupURL, data=payLoad)
-        signResult = re.findall("cancel", result.text)
-        if ("cancel" in signResult):
-            self.LineNotifyLog(infos)
-            self.Consolelog("報名成功")
+
+        errors=self.getError(result.text)
+
+        if(self.already()):
+            self.Consolelog("已報名成功")
             exit()
-        else:
-            self.Consolelog("報名失敗")
+        elif len(errors): #with error status -> print && exit 
+            for error in errors:
+                self.Consolelog(error)
+            exit()
+
 
     def main(self):
         self.Consolelog("時間區間設定完成")
